@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sn_progress_dialog/progress_dialog.dart';
@@ -19,6 +20,7 @@ class PaymentScreen extends StatefulWidget {
 
 class _PaymentScreenState extends State<PaymentScreen> {
   late String orderId;
+  bool isProcessing = false;
   CollectionReference customers =
       FirebaseFirestore.instance.collection('customers');
 
@@ -176,60 +178,72 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               height: 20,
                             ),
                             ElevatedButton(
-                              onPressed: () async {
-                                showProgress();
-                                for (var item
-                                    in context.read<Cart>().getitems) {
-                                  CollectionReference orderRef =
-                                      FirebaseFirestore.instance
-                                          .collection('orders');
-                                  orderId = const Uuid().v4();
-                                  await orderRef.doc(orderId).set({
-                                    "cid": data['cid'],
-                                    "custname": data['name'],
-                                    "custemail": data['email'],
-                                    "custphone": data['phone'],
-                                    "custaddress": data['address'],
-                                    "custimage": data['profileImage'],
-                                    "sid": item.supplierId,
-                                    "pid": item.documentId,
-                                    "oid": orderId,
-                                    "oimage": item.imagesUrl[0],
-                                    "oprice": item.price * item.qty,
-                                    "oqty": item.qty,
-                                    "odate": DateTime.now(),
-                                    "orderreview": false,
-                                    "deliverystatus": "pending",
-                                    "paymentstatus": "cash on delivery",
-                                    "deliverydate": "",
-                                  }).whenComplete(() async {
-                                    await FirebaseFirestore.instance
-                                        .runTransaction(
-                                      (transaction) async {
-                                        DocumentReference<Map<String, dynamic>>
-                                            docRef = FirebaseFirestore.instance
-                                                .collection("products")
-                                                .doc(item.documentId);
+                              onPressed: isProcessing
+                                  ? () {}
+                                  : () async {
+                                      setState(() {
+                                        isProcessing = true;
+                                      });
+                                      showProgress();
+                                      debugPrint(
+                                          "Heree-> ${context.read<Cart>().getitems.length}");
+                                      Future.forEach(
+                                          context.read<Cart>().getitems,
+                                          (item) async {
+                                        CollectionReference orderRef =
+                                            FirebaseFirestore.instance
+                                                .collection('orders');
+                                        orderId = const Uuid().v4();
+                                        await orderRef.doc(orderId).set({
+                                          "cid": data['cid'],
+                                          "custname": data['name'],
+                                          "custemail": data['email'],
+                                          "custphone": data['phone'],
+                                          "custaddress": data['address'],
+                                          "custimage": data['profileImage'],
+                                          "sid": item.supplierId,
+                                          "pid": item.documentId,
+                                          "oid": orderId,
+                                          "oimage": item.imagesUrl[0],
+                                          "oname": item.name,
+                                          "oprice": item.price * item.qty,
+                                          "oqty": item.qty,
+                                          "odate": DateTime.now(),
+                                          "orderreview": false,
+                                          "deliverystatus": "pending",
+                                          "paymentstatus": "cash on delivery",
+                                          "deliverydate": "",
+                                        }).then((value) async {
+                                          await FirebaseFirestore.instance
+                                              .runTransaction(
+                                            (transaction) async {
+                                              DocumentReference<
+                                                      Map<String, dynamic>>
+                                                  docRef = FirebaseFirestore
+                                                      .instance
+                                                      .collection("products")
+                                                      .doc(item.documentId);
 
-                                        DocumentSnapshot snapshot2 =
-                                            await transaction.get(docRef);
-                                        transaction.update(docRef, {
-                                          "instock":
-                                              snapshot2['instock'] - item.qty,
+                                              DocumentSnapshot snapshot2 =
+                                                  await transaction.get(docRef);
+                                              transaction.update(docRef, {
+                                                "instock":
+                                                    snapshot2['instock'] -
+                                                        item.qty,
+                                              });
+                                            },
+                                          );
                                         });
-                                      },
-                                    );
-                                  }).then((value) {
-                                    context.read<Cart>().clear();
-                                    Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const CustomerHomeScreen()),
-                                        (route) => false);
-                                  });
-                                }
-                              },
+                                      }).then((value) {
+                                        context.read<Cart>().clear();
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const CustomerHomeScreen()),
+                                            (route) => false);
+                                      });
+                                    },
                               style: ElevatedButton.styleFrom(
                                 fixedSize: const Size(200, 50),
                                 backgroundColor: Colors.teal,

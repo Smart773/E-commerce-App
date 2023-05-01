@@ -57,8 +57,9 @@ class WishListModel extends StatelessWidget {
                           Row(
                             children: [
                               context
-                                      .watch<Cart>()
-                                      .contains(wishItem.documentId)
+                                          .watch<Cart>()
+                                          .contains(wishItem.documentId) ||
+                                      wishItem.qntty == 0
                                   ? const SizedBox()
                                   : IconButton(
                                       onPressed: () {

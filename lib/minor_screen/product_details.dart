@@ -141,12 +141,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
 
                       //Stock count
-                      Text("InStock: ${widget.product['instock']} pieces left",
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w600,
-                          )),
+                      widget.product['instock'] == 0
+                          ? const Text("Out of Stock",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.red,
+                                fontWeight: FontWeight.w600,
+                              ))
+                          : Text(
+                              "InStock: ${widget.product['instock']} pieces left",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w600,
+                              )),
                       // Product Description Header
                       const ProductDetailsPageHeading(
                           heading: "  Product Description  "),
@@ -263,17 +271,32 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   child: ElevatedButton(
                     onPressed:
                         !context.watch<Cart>().contains(widget.product['proid'])
-                            ? () {
-                                context.read<Cart>().add(
-                                      widget.product['proname'],
-                                      widget.product['price'],
-                                      1,
-                                      widget.product['instock'],
-                                      widget.product['proimages'],
-                                      widget.product['proid'],
-                                      widget.product['sid'],
-                                    );
-                              }
+                            ? widget.product['instock'] != 0
+                                ? () {
+                                    context.read<Cart>().add(
+                                          widget.product['proname'],
+                                          widget.product['price'],
+                                          1,
+                                          widget.product['instock'],
+                                          widget.product['proimages'],
+                                          widget.product['proid'],
+                                          widget.product['sid'],
+                                        );
+                                  }
+                                : () {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                      content: Text(
+                                        "Out of Stock",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      backgroundColor: Colors.red,
+                                    ));
+                                  }
                             : null,
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.teal,

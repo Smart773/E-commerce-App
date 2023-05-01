@@ -43,6 +43,7 @@ Future<dynamic> YNDialog(
         );
       });
 }
+
 class DataWidget1 extends StatelessWidget {
   const DataWidget1({
     Key? key,
@@ -113,6 +114,23 @@ class DataWidget extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class Horizonalline extends StatelessWidget {
+  const Horizonalline({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 25),
+      child: Divider(
+        color: Colors.black,
+        thickness: 2,
+      ),
     );
   }
 }
