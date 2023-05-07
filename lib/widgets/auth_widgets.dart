@@ -68,12 +68,6 @@ class AuthHeaderLable extends StatelessWidget {
       children: [
         Text(headerLable,
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        IconButton(
-          icon: const Icon(Icons.home, color: Colors.black, size: 30),
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, '/home');
-          },
-        ),
       ],
     );
   }

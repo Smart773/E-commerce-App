@@ -76,6 +76,7 @@ class _SupplierSignUpState extends State<SupplierSignUp> {
                   'storename': storename,
                   'email': email,
                   'logoImage': logoImage,
+                  'role': 'supplier',
                   'phone': '',
                   'cid': FirebaseAuth.instance.currentUser!.uid.toString(),
                   'coverimage': '',
@@ -89,7 +90,9 @@ class _SupplierSignUpState extends State<SupplierSignUp> {
                   setState(() {
                     image = null;
                   });
-                  Navigator.pushReplacementNamed(context, '/SupplierLogin');
+                  Navigator.popUntil(
+                      context, (route) => (route.settings.name == '/home'));
+                  // Navigator.pushReplacementNamed(context, '/home');
                 }).catchError((error) => print("Failed to add user: $error"));
               });
             },
@@ -226,8 +229,8 @@ class _SupplierSignUpState extends State<SupplierSignUp> {
                     HaveAccount(
                       haveAccount: "Already have account?",
                       onPressed: () {
-                        Navigator.pushReplacementNamed(
-                            context, '/SupplierLogin');
+                        Navigator.popUntil(context,
+                            (route) => (route.settings.name == '/home'));
                       },
                       actionLable: "Login",
                     ),

@@ -155,7 +155,7 @@ class _CustomerOrdersState extends State<CustomerOrders> {
                           color: Colors.teal.shade100.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        height: 100,
+                        height: 120,
                         width: double.infinity,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,7 +205,7 @@ class RepeatedText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      "${heading}: ${data}",
+      "${heading}:  ${data}",
       style: const TextStyle(
         fontSize: 12.5,
       ),

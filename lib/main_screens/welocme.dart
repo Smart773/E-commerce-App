@@ -16,7 +16,7 @@ class _WelcomScreenState extends State<WelcomScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           // Logo(),
-          Image.asset('images/inapp/logo.jpg'),
+          Image.asset('images/inapp/logo.png'),
           // Row to login as Suppler() has button for login and Signup
           Container(
             decoration: BoxDecoration(

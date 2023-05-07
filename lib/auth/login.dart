@@ -1,18 +1,19 @@
 // TODO: LODING at Signup button
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:storeapp/widgets/auth_widgets.dart';
 import 'package:storeapp/widgets/utils.dart';
 
-class SupplierLogin extends StatefulWidget {
-  const SupplierLogin({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<SupplierLogin> createState() => _SupplierLoginState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SupplierLoginState extends State<SupplierLogin> {
+class _LoginScreenState extends State<LoginScreen> {
   bool processing = false;
 
   void logIn() async {
@@ -31,7 +32,28 @@ class _SupplierLoginState extends State<SupplierLogin> {
               content: Text('Login Successful'),
             ),
           );
-          Navigator.pushReplacementNamed(context, '/SupplierHome');
+          CollectionReference supplier =
+              FirebaseFirestore.instance.collection('supplier');
+          CollectionReference customer =
+              FirebaseFirestore.instance.collection('customers');
+
+          supplier
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .get()
+              .then((DocumentSnapshot documentSnapshot) {
+            if (documentSnapshot.exists) {
+              Navigator.pushReplacementNamed(context, '/SupplierHome');
+            }
+          });
+
+          customer
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .get()
+              .then((DocumentSnapshot documentSnapshot) {
+            if (documentSnapshot.exists) {
+              Navigator.pushReplacementNamed(context, '/CustomerHome');
+            }
+          });
         });
       } on FirebaseAuthException catch (e) {
         {
@@ -78,7 +100,13 @@ class _SupplierLoginState extends State<SupplierLogin> {
                 child: Form(
                   key: _formKey,
                   child: Column(children: [
-                    const AuthHeaderLable(headerLable: "WholeSaler LogIn Form"),
+                    //Logo
+                    Image.asset(
+                      'images/inapp/logo.png',
+                      height: 200,
+                      width: 200,
+                    ),
+                    const AuthHeaderLable(headerLable: "LogIn Form"),
                     const AppSpaceH20(),
                     //Circuler Avatar for profile picture
 
@@ -138,8 +166,7 @@ class _SupplierLoginState extends State<SupplierLogin> {
                     HaveAccount(
                       haveAccount: "Don't have an account? ",
                       onPressed: () {
-                        Navigator.pushReplacementNamed(
-                            context, "/SupplierSignUp");
+                        Navigator.pushNamed(context, "/role");
                       },
                       actionLable: "SignUp",
                     ),

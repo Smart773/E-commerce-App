@@ -75,6 +75,7 @@ class _CustomerSignUpState extends State<CustomerSignUp> {
                     .set({
                   'name': name,
                   'email': email,
+                  'role': 'customer',
                   'profileImage': profileImage,
                   'phone': '',
                   'address': '',
@@ -89,7 +90,9 @@ class _CustomerSignUpState extends State<CustomerSignUp> {
                   setState(() {
                     image = null;
                   });
-                  Navigator.pushReplacementNamed(context, '/CustomerLogin');
+
+                  Navigator.popUntil(
+                      context, (route) => (route.settings.name == '/home'));
                 }).catchError((error) => print("Failed to add user: $error"));
               });
             },
@@ -226,8 +229,8 @@ class _CustomerSignUpState extends State<CustomerSignUp> {
                     HaveAccount(
                       haveAccount: "Already have account?",
                       onPressed: () {
-                        Navigator.pushReplacementNamed(
-                            context, '/CustomerLogin');
+                        Navigator.popUntil(context,
+                            (route) => (route.settings.name == '/home'));
                       },
                       actionLable: "Login",
                     ),
